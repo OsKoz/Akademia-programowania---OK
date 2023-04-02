@@ -1,14 +1,26 @@
 package main
 
 import (
-	"io"
+	"bytes"
+	"fmt"
+	"os"
 	"reddit/fetcher"
 )
 
 func main() {
-	var f fetcher.RedditFetcher // do not change
-	var w io.Writer             // do not change
+	var r fetcher.RedditFetcher = &fetcher.Reddit{}
+	var w bytes.Buffer
 
-	f.Fetch()
-	f.Save(w)
+	err := r.Save(&w)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	file, err := os.Create("output.txt")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close()
+
+	file.Write(w.Bytes())
 }
